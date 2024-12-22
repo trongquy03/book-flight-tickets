@@ -24,7 +24,7 @@ public class MailSenderService {
     public void sendMailMessage(String toEmail,String body,String subject) throws MessagingException, IOException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
-        mimeMessageHelper.setFrom("phong2552001@gmail.com");
+        mimeMessageHelper.setFrom("trongquy1628@gmail.com");
         mimeMessageHelper.setTo(toEmail);
         mimeMessageHelper.setText(body);
         mimeMessageHelper.setSubject(subject);
@@ -33,7 +33,7 @@ public class MailSenderService {
     public void sendMailWithAttachment(String toEmail,String body,String subject,String attachment) throws MessagingException, IOException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
-        mimeMessageHelper.setFrom("phong2552001@gmail.com");
+        mimeMessageHelper.setFrom("trongquy1628@gmail.com");
         mimeMessageHelper.setTo(toEmail);
         mimeMessageHelper.setText(body);
         mimeMessageHelper.setSubject(subject);
@@ -53,7 +53,7 @@ public class MailSenderService {
     public void sendMailWithAttachment_Ticket(String toEmail, String body, String subject, ArrayList<Ticket> tickets) throws MessagingException, IOException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
-        mimeMessageHelper.setFrom("phong2552001@gmail.com");
+        mimeMessageHelper.setFrom("trongquy1628@gmail.com");
         mimeMessageHelper.setTo(toEmail);
         mimeMessageHelper.setText(body);
         mimeMessageHelper.setSubject(subject);
