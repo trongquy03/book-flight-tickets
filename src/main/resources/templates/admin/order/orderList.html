@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{admin/fragmentsAdmin :: admin_head_pageList}"/>
+<body>
+<style>
+    .update {
+        background-color: #1c98ea;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        width: 50%;
+        border: 1px solid #000;
+    }
+    .form-delete {
+        width: 50%;
+    }
+    .delete:hover {
+        background-color: #8c0505;
+    }
+    .delete {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+        border: 1px solid #000;
+        border-left: none;
+    }
+    a:hover{
+        text-decoration: none;
+    }
+    .update:hover {
+        background-color: #0e4870;
+    }
+</style>
+
+<!-- Top container -->
+<header th:replace="~{admin/fragmentsAdmin :: admin_header}"/>
+
+<!-- Sidebar/menu -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_menu}"></div>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_overlay}"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;background-color: #f1f1f1">
+
+    <h1 style="font-weight: bold; font-size: 25px; padding: 25px 15px">Danh sách hóa đơn</h1>
+
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th th:replace="~{admin/fragmentsAdmin :: column_link('orderID', 'ID hóa đơn', 'orderList')}"></th>
+            <th th:replace="~{admin/fragmentsAdmin :: column_link('total_cost', 'Tổng tiền', 'orderList')}"></th>
+            <th th:replace="~{admin/fragmentsAdmin :: column_link('customer', 'Khách hàng', 'orderList')}"></th>
+            <th th:replace="~{admin/fragmentsAdmin :: column_link('sortBy=date', 'Ngày tạo', 'orderList')}"></th>
+            <th th:replace="~{admin/fragmentsAdmin :: column_link('qrCode', 'Mã hóa đơn', 'orderList')}"></th>
+            <th th:replace="~{admin/fragmentsAdmin :: column_link('status', 'Trạng thái', 'orderList')}"></th>
+            <th class="w3-text-red">Yêu cầu hủy</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="order : ${orders}">
+            <tr>
+                <td th:utext="${order.getOrderID()}">..</td>
+                <td th:utext="${#numbers.formatCurrency(order.getTotal_cost())}">..</td>
+                <td th:utext="${order.getCustomer().getFullname()}">..</td>
+                <td th:utext="${order.getDate()}">..</td>
+                <td th:utext="${order.getQrCode()}">..</td>
+                <th:block th:if="${order.getStatus()}==0">
+                    <td class="w3-text-green">ĐÃ THANH TOÁN</td>
+                </th:block>
+                <th:block th:if="${order.getStatus()}==1">
+                    <td class="w3-text-yellow">CHỜ XÁC NHẬN</td>
+                    <td>
+                        <form method="post" th:action="@{/admin/cancel}" onclick="return showConfirmCancel(this)">
+                            <input type="hidden" name="orderID" th:value="${order.getOrderID()}">
+                            <input type="submit" class="w3-button w3-red" value="Xác nhận">
+                        </form>
+                        <script>
+                            function showConfirmCancel(a){
+                                Swal.fire({
+                                    title: "Bạn có chắc chắn?",
+                                    text: null,
+                                    icon: "warning",
+                                    showCancelButton: true,
+                                    confirmButtonColor: "#3085d6",
+                                    cancelButtonColor: "#d33",
+                                    confirmButtonText: "Đồng ý"
+                                }).then((result) => {
+                                    if(result.isConfirmed)
+                                        a.submit();
+                                });
+                                return false;
+                            }
+                        </script>
+                    </td>
+                </th:block>
+                <th:block th:if="${order.getStatus()}==2">
+                    <td class="w3-text-red">ĐÃ HỦY</td>
+                </th:block>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+    <div th:replace="~{admin/fragmentsAdmin :: pagination('orderList', 'orders')}"></div>
+</div>
+</body>
+</html>

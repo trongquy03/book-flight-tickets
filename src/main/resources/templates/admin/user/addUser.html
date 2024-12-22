@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{admin/fragmentsAdmin :: admin_head_pageList}"/>
+<body>
+<style>
+    .error {
+        color: red;
+    }
+    p {
+        padding: 0;
+        margin: 0;
+    }
+    .paddingName {
+        padding: 10px 0 4px;
+    }
+</style>
+
+<!-- Top container -->
+<header th:replace="~{admin/fragmentsAdmin :: admin_header}"/>
+
+<!-- Sidebar/menu -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_menu}"></div>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_overlay}"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;background-color: #f1f1f1">
+
+    <h1 style="font-weight: bold; font-size: 25px; padding: 25px 15px">Tạo tài khoản</h1>
+    <form id="add_User" style="padding-left: 20px;" th:method="POST" th:action="@{/admin/addUser/save}">
+        <br/>
+        <p class="paddingName">Tên tài khoản</p>
+        <input type="text" name="username" placeholder=""/>
+        <br/>
+        <p class="paddingName">Mật khẩu</p>
+        <input type="password" name="password"/>
+        <br/>
+        <p class="paddingName">Vai trò</p>
+        <select name="role">
+            <option th:value="0"><span>KHÁCH HÀNG</span></option>
+            <option th:value="1"><span>NHÂN VIÊN</span></option>
+            <option th:value="2"><span>QUẢN LÝ</span></option>
+        </select>
+        <br/>
+        <button class="btn btn-primary w3-margin-top" type="submit" value="add">Lưu</button>
+    </form>
+    <a class="" href="/admin/userList">Danh sách tài khoản</a>
+    <script>
+        $(document).ready(function (){
+            $.validator.addMethod("passwordRule",function (value,element,args) {
+                return /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[A-Za-z0-9])(?=.{8,})/.test(value);
+            },'Password must contains 1 lowercase letter, one uppercase letter, one digit, one special character and at least 8 characters');
+            $.validator.addMethod("noWhiteSpace",function (value,element,args) {
+                return /^\S+$/.test(value);
+            },'Please no white space!');
+            $("#add_User").validate({
+                rules:{
+                    username:{
+                        required:true,
+                        minlength: 6,
+                        noWhiteSpace: true
+                    },
+                    password:{
+                        required:true,
+                        passwordRule: true
+                    },
+                    role:{
+                        required:true
+                    }
+                },
+                messages:{
+                    username:{
+                        required:"This field is required!",
+                        minlength: "Enter at least 6 characters!",
+                        noWhiteSpace: "Enter no white space!"
+                    },
+                    password: {
+                        required:"This field is required!"
+                    },
+                    role:{
+                        required:"This field is required!"
+                    }
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
