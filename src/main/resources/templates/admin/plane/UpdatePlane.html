@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{admin/fragmentsAdmin :: admin_head_pageList}"/>
+<body>
+<style>
+    .error {
+        color: red;
+    }
+</style>
+
+<!-- Top container -->
+<header th:replace="~{admin/fragmentsAdmin :: admin_header}"/>
+
+<!-- Sidebar/menu -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_menu}"></div>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_overlay}"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;background-color: #f1f1f1">
+
+    <h1 style="font-weight: bold; font-size: 25px; padding: 25px 15px">Sửa thông tin máy bay</h1>
+
+
+    <form method="POST" th:action="@{/admin/updatePlane/{id}(id=${plane.getPlaneID()})}">
+        <label class="" for="planeName">Tên máy bay</label>
+        <input class="w3-margin input-group w3-input" type="text" id="planeName" name="planeName" />
+        <p th:if="${planeName}" class="error">[[${planeName}]]</p>
+        <br/>
+        <label for="slSeat">Số lượng ghế</label>
+        <input class="w3-margin input-group w3-input" type="number" value="0" id="slSeat" name="slSeat">
+        <p th:if="${quantitySeat}" class="error">[[${quantitySeat}]]</p>
+        <br/>
+        <label for="airlineID">Hãng hàng không</label>
+    <select class="w3-input w3-margin" name="airlineID" id="airlineID">
+        <option th:value="${plane.getAirlineCompany().getAirlineID()}">
+            <span th:text="${plane.getAirlineCompany().getAirline_name()}"></span>
+        </option>
+        <th:block th:each="airlineid : ${airlineCompanies}">
+            <option th:value="${airlineid.getAirlineID()}">
+                <span th:text="${airlineid.getAirlineName()}"></span>
+            </option>
+        </th:block>
+    </select>
+    <br/>
+    <button class="w3-margin btn btn-primary" type="submit" value="update">Lưu</button>
+</form>
+<a href="/admin/listPlane">Danh sách máy bay</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="~{admin/fragmentsAdmin :: admin_head_pageList}"/>
+<body>
+<style>
+    .error {
+        color: red;
+    }
+    p {
+        padding: 0;
+        margin: 0;
+    }
+    #reader button{
+        height: 50px;
+        border-radius: 5px;
+        color: black;
+        margin: 5px 0 15px 0;
+        box-shadow: black;
+    }
+</style>
+
+<!-- Top container -->
+<header th:replace="~{admin/fragmentsAdmin :: admin_header}"/>
+
+<!-- Sidebar/menu -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_menu}"></div>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_overlay}"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main " style="margin-left:300px;margin-top:43px;background-color: #f1f1f1">
+    <div class="container ">
+        <div class="header clearfix">
+
+            <h3 class="text-muted">VNPAY</h3>
+        </div>
+        <h3>Refund</h3>
+        <div class="" th:if="${session.order_cancel}">
+            <form th:action="@{/api/order/refund}" id="frmrefund" method="Post">
+                <div class="form-group">
+                    <label for="order_id">Mã giao dịch cần hoàn (Giá trị của vnp_TxnRef)</label>
+                    <input class="form-control" id="order_id"
+                           name="order_id" type="text" th:value="${session.order_cancel.getQrCode()}"/>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Số tiền hoàn</label>
+                    <input class="form-control" data-val="true" data-val-number="The field Amount must be a number." data-val-required="The Amount field is required." id="amount" max="100000000" min="1" name="amount" type="number" th:value="${session.order_cancel.getTotal_cost()}" />
+                </div>
+                <div class="form-group">
+                    <label for="trantype">Kiểu hoàn tiền</label>
+                    <select name="trantype" id="trantype" class="form-control">
+                        <option value="02">Hoàn tiền toàn phần</option>
+                        <option value="03">Hoàn tiền một phần</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="trans_date">Thời gian khởi tạo giao dịch (Giá trị của vnp_CreateDate yêu cầu thanh toán)</label>
+                    <input class="form-control" id="trans_date"
+                           name="trans_date" type="text" placeholder="yyyyMMddHHmmss" th:value="${session.order_cancel.getDate()}"/>
+                </div>
+                <div class="form-group">
+                    <label for="user">User khởi tạo hoàn</label>
+                    <input class="form-control" id="user"
+                           name="user" type="text" th:value="${session.username}"/>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Refund</button>
+                </div>
+            </form>
+            <p>
+                &nbsp;
+            </p>
+            <div th:if="${resp}"><span th:text="${resp}"></span> </div>
+            <footer class="footer">
+                <p>&copy; VNPAY 2020</p>
+            </footer>
+        </div>
+    </div>
+</div>
+</body>
+</html>

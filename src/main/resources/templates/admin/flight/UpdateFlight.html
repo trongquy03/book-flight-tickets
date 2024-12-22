@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{admin/fragmentsAdmin :: admin_head_pageList}"/>
+<body>
+<style>
+  .error {
+    color: red;
+  }
+  p {
+    padding: 0;
+    margin: 0;
+  }
+  .paddingName {
+    padding: 10px 0 4px;
+  }
+</style>
+
+<!-- Top container -->
+<header th:replace="~{admin/fragmentsAdmin :: admin_header}"/>
+
+<!-- Sidebar/menu -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_menu}"></div>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_overlay}"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;background-color: #f1f1f1">
+
+  <h1 style="font-weight: bold; font-size: 25px; padding: 25px 15px">Sửa thông tin chuyến bay</h1>
+  <form style="padding-left: 20px;" th:method="POST" th:action="@{/admin/updateFlight/{id}(id=${flight.getFlightID()})}">
+    <p class="paddingName">Điểm khởi hành</p>
+    <input type="text" name="departingForm" placeholder="Điểm khởi hành" th:value="${flight.getDepartingFrom()}"/>
+    <p th:if="${departingForm}" class="error">[[${departingForm}]]</p>
+    <br/>
+    <p class="paddingName">Điểm đến</p>
+    <input type="text" name="arrivingAt" placeholder="Điểm đến" th:value="${flight.getArrivingAt()}"/>
+    <p th:if="${arrivingAt}" class="error">[[${arrivingAt}]]</p>
+    <br/>
+    <p class="paddingName">Giờ cất cánh</p>
+    <input type="number" value="0" name="flightTime" placeholder="Giờ cất cánh" th:value="${flight.getFlightTime()}"/>
+    <p th:if="${flightTime}" class="error">[[${flightTime}]]</p>
+    <br/>
+    <p class="paddingName">Giờ hạ cánh</p>
+    <input type="number" value="0" name="departureTime" placeholder="Giờ hạ cánh" th:value="${flight.getDepartureTime()}"/>
+    <p th:if="${departureTime}" class="error">[[${departureTime}]]</p>
+    <br/>
+    <p class="paddingName">Phí chuyến bay</p>
+    <input type="number" value="0" name="feeFlightx" placeholder="Phí chuyến bay" th:value="${flight.getFeeFlight()}">
+    <p th:if="${feeFlight}" class="error">[[${feeFlight}]]</p>
+    <br/>
+    <br/>
+    <button type="submit" value="add">Lưu</button>
+  </form>
+  <a href="/admin/flightList">Dánh sách chuyến bay</a>
+</div>
+</body>
+</html>

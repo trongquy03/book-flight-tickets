@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="~{admin/fragmentsAdmin :: admin_head_pageList}"/>
+<body>
+<style>
+    .error {
+        color: red;
+    }
+    p {
+        padding: 0;
+        margin: 0;
+    }
+    #reader button{
+        height: 50px;
+        border-radius: 5px;
+        color: black;
+        margin: 5px 0 15px 0;
+        box-shadow: black;
+    }
+</style>
+
+<!-- Top container -->
+<header th:replace="~{admin/fragmentsAdmin :: admin_header}"/>
+
+<!-- Sidebar/menu -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_menu}"></div>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_overlay}"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main " style="margin-left:300px;margin-top:43px;background-color: #f1f1f1">
+    <div class="container" style="width: 100%;">
+        <div class="header clearfix">
+
+            <h3 class="text-muted">VNPAY DEMO</h3>
+        </div>
+        <h3>Query</h3>
+        <div class="table-responsive">
+            <form th:action="@{/api/order/query}" id="frmQerydr" method="Post">
+                <div class="form-group">
+                    <label for="order_id">Mã giao dịch cần truy vấn (Giá trị của vnp_TxnRef)</label>
+                    <input class="form-control" id="order_id"
+                           name="order_id" type="text"/>
+                </div>
+                <div class="form-group">
+                    <label for="trans_date">Thời gian khởi tạo giao dịch (Giá trị của vnp_CreateDate yêu cầu thanh toán)</label>
+                    <input class="form-control" id="trans_date"
+                           name="trans_date" type="text" placeholder="yyyyMMddHHmmss"/>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">QueryDr</button>
+                </div>
+            </form>
+            <p th:if="${resp}">
+                &nbsp;<span th:text="${resp}"></span>
+            </p>
+            <footer class="footer">
+                <p>&copy; VNPAY 2020</p>
+            </footer>
+        </div>
+    </div>
+</div>
+</body>
+</html>

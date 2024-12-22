@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="~{client/fragments::html_head}"/>
+<body class="w3-light-grey">
+
+<!-- Navigation Bar -->
+<div th:replace="~{client/fragments::navigationBar}"/>
+<style>
+    #reader button{
+        height: 50px;
+        border-radius: 5px;
+        color: black;
+        margin: 5px 0 15px 0;
+        box-shadow: black;
+    }
+    #reader span{
+        color: #1c98ea;
+    }
+</style>
+<!-- Page Container -->
+<div th:if="${success}">
+    <!--            Thong bao thanh cong-->
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: "[[${success}]]"
+        });
+    </script>
+</div>
+<div th:if="${error}">
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '[[${error}]]',
+            footer: ''
+        })
+    </script>
+</div>
+<div  class="w3-content w3-margin-top w3-center" style="display:flex;justify-content: space-around;max-width:1400px;height: 380px;">
+    <div style="width: 40%;">
+        <!--Scanner-->
+        <div class="w3-panel w3-text-blue-gray w3-leftbar w3-border-blue w3-pale-blue guide" style=""><p>Yêu cầu cho phép sử dụng camera của thiết bị để quét mã QR.</p></div>
+        <div class="w3-card" style="width: 100%;" id="reader"></div>
+        <div style="display: flex;justify-content: center"><p class="w3-red w3-card" id="error"></p></div>
+        <div class="w3-panel w3-text-red w3-leftbar w3-border-red w3-pale-red" th:if="${error}" th:text="${error}"></div>
+        <!--Script tao camera scan QR-->
+        <script>
+            var qrScanner = new Html5QrcodeScanner(
+                "reader", { fps: 30, qrbox: 250 });
+            qrScanner.render(success, error);
+            function success(resultRead) {
+                qrScanner.clear();
+                let jsonData = {qrcodeEncoded: resultRead};
+                $.post("http://localhost:8080/api/payment/searchOrder",jsonData,takeOrder);
+                function takeOrder(data){
+                    if(data === null)
+                        window.location.replace("http://localhost:8080/flights/showOrder/fail");
+                    else{
+                        console.log("heho")
+                        $.ajax({
+                            type: 'post',
+                            url: 'http://localhost:8080/api/payment/showOrder',
+                            data: JSON.stringify(data),
+                            contentType: "application/json; charset=utf-8",
+                            traditional: true,
+                            success:function(data){
+                                window.location.replace("http://localhost:8080" + data);
+                            }
+                        });
+                    }
+
+                }
+            }
+            function error(err) {
+                document.getElementById('error').innerHTML = err;
+            }
+        </script>
+        <!-- The Grid -->
+    </div>
+</div>
+<div class="" style="width: 100%;display: flex;justify-content: space-around;">
+    <div th:if="${order}" class="w3-row-padding w3-card w3-white" style="min-height: 580px;width: 90%;">
+        <p class="w3-left" style="font-size: 25px;padding: 3%;"><i class="fa-solid fa-receipt"></i> Mã đặt chỗ: <span class="w3-text-blue" th:text="${order.getQrCode()}"></span></p>
+        <div class="w3-border-grey">
+            <table class="w3-table w3-striped" style="border: none;text-align: left;width: 100%;">
+                <tr>
+                    <td><b>HỌ & TÊN KHÁCH HÀNG: </b></td>
+                    <td><span th:text="${order.getCustomer().getFullname()}"></span></td>
+                </tr>
+                <tr>
+                    <td><b>NGÀY XUẤT HÓA ĐƠN</b></td>
+                    <td><span th:text="${order.getDate()}"></span></td>
+                </tr>
+                <tr>
+                    <td><b>TỔNG TIỀN</b></td>
+                    <td><span th:text="${#numbers.formatCurrency(order.getTotal_cost())}"></span></td>
+                </tr>
+                <tr>
+                    <td><b>TRẠNG THÁI</b></td>
+                    <td th:if="${order.getStatus()==0}" class="w3-text-green">ĐÃ THANH TOÁN</td>
+                    <td th:if="${order.getStatus()>0}" class="w3-text-red">ĐÃ HỦY</td>
+                </tr>
+                <tr>
+                    <td><b>NƠI XUẤT HÓA ĐƠN</b></td>
+                    <td>GOGO</td>
+                </tr>
+            </table>
+            <h5>THÔNG TIN VÉ</h5>
+            <th:block th:each="ticket : ${tickets}">
+                <div class="">
+                    <table class="w3-table-all" style="text-align: center;width: 100%;">
+                        <tr>
+                            <th>NGÀY KHỞI HÀNH</th>
+                            <th>HÃNG HÀNG KHÔNG</th>
+                            <th>TỪ</th>
+                            <th>ĐẾN</th>
+                        </tr>
+                        <tr>
+                            <td><span th:text="${ticket.getFlight().getDateFlight()}"></span> </td>
+                            <td><span th:text="${ticket.getSeat().getPlane().getAirlineCompany().getAirline_name()}"></span></td>
+                            <td><span th:text="${ticket.getFlight().getDepartingFrom()}"></span> - <span th:text="${ticket.getFlight().getFlightTime()}"></span></td>
+                            <td><span th:text="${ticket.getFlight().getArrivingAt()}"></span> - <span th:text="${ticket.getFlight().getDepartureTime()}"></span></td>
+                        </tr>
+                    </table>
+                </div>
+            </th:block>
+        </div>
+        <form th:action="@{/flights/cancel}" method="post" class="w3-container w3-right" onsubmit="return showConfirm(this)">
+            <input type="hidden" name="orderID" th:value="${order.getOrderID()}">
+            <input class="w3-button w3-red w3-hover-yellow w3-margin" type="submit" id="btnCancel" value="Yêu cầu hủy">
+            <script>
+                function showConfirm(form){
+                    Swal.fire({
+                        title: "Bạn có chắc muốn hủy?",
+                        text: "Hoàn tiền tại đại lý!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Đồng ý"
+                    }).then((result) => {
+                        if(result.isConfirmed)
+                            form.submit();
+                    });
+                    return false;
+                }
+            </script>
+        </form>
+    </div>
+    <div th:unless="${order}" class="w3-center">
+        <i class="fa fa-solid fa-circle-exclamation" style="opacity: 0.3;font-size: 150px;color: red;"></i>
+        <h3 class="w3-center w3-text-red w3-margin-bottom w3-margin-top-20">Không tìm thấy hóa đơn nào !</h3>
+    </div>
+
+</div>
+<footer th:replace="~{client/fragments::footer}" />
+</body>
+</html>

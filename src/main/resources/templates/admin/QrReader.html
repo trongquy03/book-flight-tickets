@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{admin/fragmentsAdmin :: admin_head_pageList}"/>
+<body>
+<style>
+    .error {
+        color: red;
+    }
+    p {
+        padding: 0;
+        margin: 0;
+    }
+    #reader button{
+        height: 50px;
+        border-radius: 5px;
+        color: black;
+        margin: 5px 0 15px 0;
+        box-shadow: black;
+    }
+</style>
+
+<!-- Top container -->
+<header th:replace="~{admin/fragmentsAdmin :: admin_header}"/>
+
+<!-- Sidebar/menu -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_menu}"></div>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div th:replace="~{admin/fragmentsAdmin :: admin_overlay}"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main w3-display-container" style="margin-left:300px;margin-top:43px;background-color: #f1f1f1;min-height: 560px;">
+    <div class="w3-display-middle" style="width: 50%;">
+        <div th:if="${success}">
+<!--            Thong bao thanh cong-->
+            <script>
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "success",
+                    title: "[[${success}]]"
+                });
+            </script>
+        </div>
+        <div class="w3-panel w3-text-blue-gray w3-leftbar w3-border-blue w3-pale-blue guide" style=""><p>Yêu cầu cho phép sử dụng camera của thiết bị để quét mã QR.</p></div>
+        <div class="w3-card" id="reader"></div>
+        <div class="w3-red w3-card" id="error"></div>
+        <div class="w3-panel w3-text-red w3-leftbar w3-border-red w3-pale-red" th:if="${error}" th:text="${error}"></div>
+<!--        Tao camera scan QR-->
+        <script>
+            var html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", { fps: 30, qrbox: 250 });
+            html5QrcodeScanner.render(success, error);
+            function success(resultRead) {
+                html5QrcodeScanner.clear();
+                let jsonData = {qrcodeEncoded: resultRead};
+                $.post("http://localhost:8080/api/payment/ticket/export",jsonData,takeOrder);
+                function takeOrder(data){
+                    console.log(data)
+                    if(data === null)
+                        window.location.replace("http://localhost:8080/admin/ticket/qrreader/fail");
+                    else{
+                        $.ajax({
+                            type: 'post',
+                            url: 'http://localhost:8080/api/payment/ticket/qrreader/success',
+                            data: JSON.stringify(data),
+                            contentType: "application/json; charset=utf-8",
+                            traditional: true,
+                            success: function (data) {
+                                console.log("success")
+                                window.location.replace("http://localhost:8080"+data);
+                            }
+                        });
+                    }
+
+                }
+            }
+
+            function error(err) {
+                document.getElementById('error').innerHTML = err;
+            }
+        </script>
+    </div>
+</div>
+</body>
+</html>

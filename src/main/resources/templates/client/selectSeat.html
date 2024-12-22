@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="~{client/fragments::html_head}"/>
+<body class="w3-light-grey">
+
+<!-- Navigation Bar -->
+<div th:replace="~{client/fragments::navigationBar}"/>
+
+<!-- Page Container -->
+<div  class="w3-content w3-margin-top" style="max-width:1400px;min-height: 741px;" th:if="${session.flightSelected}">
+    <div class="w3-container w3-card w3-white w3-margin-bottom" style="display: flex;justify-content: space-around;">
+        <p class="w3-margin-top"><i style="font-size: 40px;" class="fa fas fa-couch w3-text-red"></i> : Chỗ ngồi đã có người đặt</p>
+        <p class="w3-margin-top "><i style="font-size: 40px;" class="fa fas fa-couch w3-text-grey"></i> : Chỗ ngồi trống</p>
+        <p class="w3-margin-top "><i style="font-size: 40px;" class="fa fas fa-couch w3-text-amber"></i> : Chỗ ngồi đang tiến hành thanh toán</p>
+        <p class="w3-margin-top "><i style="font-size: 40px;color: #2196F3" class="fa fas fa-couch"></i> : Chỗ ngồi bạn chọn</p>
+    </div>
+    <div th:if="${error}">
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '[[${error}]]',
+                footer: ''
+            })
+        </script>
+    </div>
+    <!-- The Grid -->
+    <div class="w3-row-padding">
+        <!-- Right Column -->
+        <div class="w3-twothird w3-container">
+            <th:block th:each="flight : ${session.flightSelected}">
+                <h3><span th:text="${flight.getFlight().getDepartingFrom()}"></span>    -    <span th:text="${flight.getFlight().getArrivingAt()}"></span> | <span th:text="${session.seatClass.categoryName}"></span> | <span th:text="${flight.customer.getFullname()}"></span></h3>
+                <div class="w3-panel w3-pale-red w3-leftbar w3-rightbar w3-border-red w3-row-padding w3-col-" style="width: 80%;">
+                    <th:block th:each="seat : ${flight.getSeats()}">
+                        <a th:href="'/flights/saveInfor/'+${seat.getSeatID()}+'&'+${flight.getFlight().getFlightID()}+'&'+${flight.getCustomer().getEmail()}" style="text-decoration: none;">
+                            <div class="w3-quarter w3-center" style="padding: 10px;">
+                                <span style="position: relative;left: 42px;color: white;font-size: 15px;top: -14px;" th:text="${seat.getPosition()}"></span>
+                                <i style="font-size: 40px;" th:class="'fa fas fa-couch cl' + ${seat.getSeatID()}"></i>
+                                <input type="hidden" th:name="${seat.getSeatID()}">
+                                <script th:inline="javascript">
+                                    $(document).ready(function (){
+                                        $( window ).on("load", function() {
+                                            if([[${seat.getStatus()}]] == 1)
+                                                $(".cl" + [[${seat.getSeatID()}]]).css("color","#f44336");
+                                            if([[${seat.getStatus()}]] == 2)
+                                                $(".cl" + [[${seat.getSeatID()}]]).css("color","#ffc107");
+                                            if([[${seat.getStatus()}]] == 3)
+                                                $(".cl" + [[${seat.getSeatID()}]]).css("color","#2196F3");
+                                        });
+                                    });
+                                </script>
+                            </div>
+                        </a>
+                    </th:block>
+                </div>
+            </th:block>
+        </div>
+        <!-- End Right Column -->
+        <!-- Left Column -->
+        <div class="w3-third">
+            <h3 class="w3-text-black w3-padding-16">Chi tiết chuyến bay</h3>
+            <th:block th:each="fs : ${session.flightSelected}">
+                <th:block th:each = "plane : ${fs.getFlight().getPlanes()}">
+                    <div class="w3-container w3-card w3-white w3-margin-bottom">
+                        <p class="w3-panel w3-pale-blue w3-leftbar w3-rightbar w3-border-blue "><span th:text="${fs.getFlight().getDepartingFrom()}"></span>     <i class="fa fa-solid fa-plane"></i>     <span th:text="${fs.getFlight().getArrivingAt()}"></span> <span class="w3-right">VND</span><span th:text="${#numbers.formatCurrency(fs.getFlight().getFeeFlight() + plane.getAirlineCompany().getAirline_fee())}" class="w3-right"></span> </p>
+                        <p class="w3-panel w3-pale-khaki w3-leftbar w3-rightbar w3-border-khaki ">Khởi hành ngày <span th:text="${fs.getFlight().getDepartureTime()}"></span>, <span th:text="${fs.getFlight().getDateFlight()}"></span></p>
+                        <h6 class="w3-panel w3-leftbar w3-rightbar "><span th:text="${fs.getFlight().getDepartingFrom()}"></span>     <i class="fa fa-solid fa-plane"></i>     <span th:text="${fs.getFlight().getArrivingAt()}"></span></h6>
+                        <p>Thời gian di chuyển: <span th:text="${fs.getFlight().getTravelTime()}"></span>/Direct Flight</p>
+                        <p>Máy bay <span class="w3-text-blue" th:text="${plane.getPlane_name()}"></span></p>
+                        <p>Vận hành bởi <span class="w3-text-blue" th:text="${plane.getAirlineCompany().getAirline_name()}"></span></p>
+                        <h6 class="w3-panel w3-pale-khaki w3-leftbar w3-rightbar w3-border-khaki">Người lớn x <span class="w3-text-blue" th:text="${session.adults}"></span> <span class="w3-right">VND</span> <span class="w3-right" th:text="${#numbers.formatCurrency((fs.getFlight().getFeeFlight()+plane.getAirlineCompany().getAirline_fee())*session.adults)}"></span></h6>
+                        <div th:if="${session.child}">
+                            <h6 class="w3-panel w3-pale-khaki w3-leftbar w3-rightbar w3-border-khaki">Trẻ em x <span class="w3-text-blue" th:text="${session.child}"></span> <span class="w3-right">VND</span><span class="w3-right" th:text="${#numbers.formatCurrency((fs.getFlight().getFeeFlight()+plane.getAirlineCompany().getAirline_fee())*session.child*0.8)}"></span></h6>
+                        </div>
+                        <h6 class="w3-panel w3-pale-khaki w3-leftbar w3-rightbar w3-border-khaki">Hạng ghế: <span th:text="${session.seatClass.getCategoryName()}"></span> <span class="w3-right">VND</span> <span class="w3-right" th:text="${#numbers.formatCurrency(session.seatClass.getFeeCategory())}"></span></h6>
+                        <p class="w3-panel w3-pale-khaki w3-leftbar w3-rightbar w3-border-khaki w3-white w3-card">Hành lý đi kèm - <span th:text="${fs.getCustomer().getFullname()}"></span><span class="w3-right"><span th:text="${#numbers.formatCurrency(fs.getLuggage().getCost())}"></span>VND</span><span class="w3-right">(<span th:text="${fs.getLuggage().getWeight()}"></span>kg)</span></p>
+                        <div th:if="${fs.getSeat()}">
+                            <h6 class="w3-panel w3-pale-khaki w3-leftbar w3-rightbar w3-border-khaki">Ghế ngồi x <span class="w3-text-blue" th:text="${fs.getSeat().getPosition()}"></span><a th:href="'/flights/changeInfo/'+${fs.getSeat().getSeatID()}" class="w3-right w3-text-red"><span>Xóa</span></a></h6>
+                        </div>
+                    </div>
+                </th:block>
+            </th:block>
+            <h3 class="w3-panel w3-pale-blue w3-leftbar w3-rightbar w3-border-blue">Tổng tiền  <span class="w3-right">VND</span><span class="w3-right" th:text="${#numbers.formatCurrency(session.totalBill)}"></span></h3>
+            <a th:href="@{/flights/displayPayment}" class="w3-button w3-red w3-text-white" style="width: 100%;text-decoration: none;font-size: 30px;">Tiếp tục mua</a>
+            <!-- End Left Column -->
+        </div>
+    </div>
+
+    <!-- End Page Container -->
+</div>
+<footer th:replace="~{client/fragments::footer}" />
+</body>
+</html>
