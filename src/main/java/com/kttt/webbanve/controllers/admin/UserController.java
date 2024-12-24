@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 854f49e40e899c064d19436f977bbb2f5c976e86
 @Controller
 public class UserController {
     @Autowired

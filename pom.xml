@@ -100,7 +100,11 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+<<<<<<< HEAD
             <version>1.18.24</version>
+=======
+            <version>1.18.30</version>
+>>>>>>> 854f49e40e899c064d19436f977bbb2f5c976e86
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>

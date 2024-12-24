@@ -31,8 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
 src/main/java/com.kttt.webbanve/
 src/main/resources/
 
 
 
+=======
+>>>>>>> 854f49e40e899c064d19436f977bbb2f5c976e86
