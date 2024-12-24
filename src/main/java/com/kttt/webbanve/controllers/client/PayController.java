@@ -115,7 +115,6 @@ public class PayController {
             long amount = (long)request.getSession().getAttribute("totalBill")*100;
 
             String vnp_TxnRef = order_after.getQrCode();
-<<<<<<< HEAD
 //            String vnp_IpAddr = Config.getIpAddress(request);
 //
             Map<String, String> vnp_Params = new HashMap<>();
@@ -143,33 +142,7 @@ public class PayController {
 //            String vnp_ExpireDate = formatter.format(cld.getTime());
 //            vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 //
-=======
-            String vnp_IpAddr = Config.getIpAddress(request);
 
-            Map<String, String> vnp_Params = new HashMap<>();
-            vnp_Params.put("vnp_Version", Config.vnp_Version);
-            vnp_Params.put("vnp_Command", Config.vnp_Command);
-            vnp_Params.put("vnp_TmnCode", Config.vnp_TmnCode);
-            vnp_Params.put("vnp_Amount", String.valueOf(amount));
-            vnp_Params.put("vnp_CurrCode", "VND");
-            vnp_Params.put("vnp_Locale", "vn");
-            vnp_Params.put("vnp_BankCode", "");
-            vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-            vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
-            vnp_Params.put("vnp_OrderType", Config.orderType);
-            vnp_Params.put("vnp_ReturnUrl", Config.vnp_ReturnUrl);
-            vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
-
-            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-            String vnp_CreateDate = formatter.format(cld.getTime());
-            vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
-
-            cld.add(Calendar.MINUTE, 15);
-            String vnp_ExpireDate = formatter.format(cld.getTime());
-            vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
-
->>>>>>> 854f49e40e899c064d19436f977bbb2f5c976e86
             List fieldNames = new ArrayList(vnp_Params.keySet());
             Collections.sort(fieldNames);
             StringBuilder hashData = new StringBuilder();
@@ -194,15 +167,11 @@ public class PayController {
                 }
             }
             String queryUrl = query.toString();
-<<<<<<< HEAD
+
 //            String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
 //            queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
             String paymentUrl = Config.vnp_ReturnUrl + "?" + queryUrl;
-=======
-            String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
-            queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-            String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
->>>>>>> 854f49e40e899c064d19436f977bbb2f5c976e86
+
             return paymentUrl;
     }
 
